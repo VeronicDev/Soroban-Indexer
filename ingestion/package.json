@@ -1,0 +1,17 @@
+{
+  "name": "soroban-indexer-ingestion",
+  "version": "0.1.0",
+  "description": "Polls Soroban RPC for contract events and writes them to Postgres.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test src/__tests__/*.test.js"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^12.3.0",
+    "pg": "^8.11.5",
+    "dotenv": "^16.4.5"
+  }
+}

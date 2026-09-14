@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: indexer
+      POSTGRES_PASSWORD: indexer
+      POSTGRES_DB: soroban_indexer
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U indexer -d soroban_indexer"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ingestion:
+    build:
+      context: .
+      dockerfile: ingestion/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./ingestion/.env
+    environment:
+      DATABASE_URL: postgres://indexer:indexer@postgres:5432/soroban_indexer
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./api/.env
+    environment:
+      DATABASE_URL: postgres://indexer:indexer@postgres:5432/soroban_indexer
+      PORT: 4000
+    ports:
+      - "4000:4000"
+
+  dashboard:
+    build: ./dashboard
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: http://localhost:4000
+    ports:
+      - "5173:5173"
+
+volumes:
+  pgdata:
