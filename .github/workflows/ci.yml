@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: indexer
+          POSTGRES_PASSWORD: indexer
+          POSTGRES_DB: soroban_indexer
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U indexer -d soroban_indexer"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install each package and run its tests
+      - name: API — install & test
+        working-directory: api
+        run: |
+          npm install
+          npm test
+        env:
+          DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
+
+      # Adapter tests (no dependencies beyond what's in the root)
+      - name: Adapters — test
+        run: node --test adapters/__tests__/*.test.js
+
+      # Ingestion tests (needs Postgres)
+      - name: Ingestion — install & test
+        working-directory: ingestion
+        run: |
+          npm install
+          npm test
+        env:
+          TEST_DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
+          DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
+
+  # Formatting check (non-blocking for now)
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npx prettier --check "**/*.{js,jsx,json,md}" --ignore-path .prettierignore

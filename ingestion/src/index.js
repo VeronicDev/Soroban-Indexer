@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { createServer, pollContract } from "./rpcListener.js";
+import { log, logError } from "./logger.js";
 
 const RPC_URL = process.env.SOROBAN_RPC_URL;
 const CONTRACT_IDS = (process.env.CONTRACT_IDS ?? "")
@@ -24,27 +25,27 @@ process.on("SIGTERM", () => (shuttingDown = true));
 process.on("SIGINT", () => (shuttingDown = true));
 
 async function pollLoop() {
-  console.log(`[ingestion] starting, watching ${CONTRACT_IDS.length} contract(s)`);
+  log(`starting, watching ${CONTRACT_IDS.length} contract(s)`);
 
   while (!shuttingDown) {
     for (const contractId of CONTRACT_IDS) {
       try {
         const written = await pollContract(server, contractId);
         if (written > 0) {
-          console.log(`[ingestion] ${contractId}: wrote ${written} new event(s)`);
+          log(`${contractId}: wrote ${written} new event(s)`, { contract_id: contractId, count: written });
         }
       } catch (err) {
         // Reconnection/retry: don't crash the whole loop on a transient RPC
         // hiccup (network blip, RPC provider rate limit, etc). Just log and
         // retry on the next tick — the checkpoint ensures no gap/duplicate.
-        console.error(`[ingestion] error polling ${contractId}:`, err.message);
+        logError(`error polling ${contractId}`, err, { contract_id: contractId });
       }
     }
 
     await sleep(POLL_INTERVAL_MS);
   }
 
-  console.log("[ingestion] shutting down cleanly");
+  log("shutting down cleanly");
   process.exit(0);
 }
 

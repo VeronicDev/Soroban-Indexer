@@ -11,9 +11,10 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-// TODO: replace with the real deployed contract ID you're indexing (must
-// match one of CONTRACT_IDS in ingestion/.env).
-const DEMO_CONTRACT_ID = "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
+// Demo contract ID — replace with your real deployed contract ID
+// (must match one of CONTRACT_IDS in ingestion/.env).
+const DEMO_CONTRACT_ID = import.meta.env.VITE_DEMO_CONTRACT_ID ||
+  "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
 
 export default function App() {
   const [events, setEvents] = useState([]);

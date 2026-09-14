@@ -41,8 +41,20 @@ cp api/.env.example api/.env
 docker compose up --build
 ```
 
-- API: http://localhost:4000
+- API health check: http://localhost:4000/v1/health
 - Dashboard: http://localhost:5173
+
+## API reference
+
+All endpoints are under the `/v1/` prefix. See [docs/api.md](docs/api.md) for
+full details.
+
+| Endpoint | Description |
+|---|---|
+| `GET /v1/health` | Health check (includes DB connectivity) |
+| `GET /v1/events` | List events with optional filters and pagination |
+| `GET /v1/events/:id` | Get a single event by ID |
+| `GET /v1/events/volume?contract=` | Event counts per hour for charting |
 
 ## Scope
 
@@ -52,6 +64,10 @@ This is v1 / MVP scope, intentionally limited:
 - ✅ Adapter pattern for per-contract decoding
 - ✅ REST query API with filtering + pagination
 - ✅ One example adapter + example dashboard
+- ✅ CORS enabled for cross-origin dashboard/API usage
+- ✅ Structured JSON logging
+- ✅ Graceful shutdown handling
+- ✅ Health check with DB connectivity verification
 
 Explicitly **out of scope** for this version: full historical backfill of all
 Stellar ledger history, multi-chain support, a hosted/managed service. This is
@@ -65,10 +81,21 @@ meant to be self-hostable open infra, not a SaaS product.
 /adapters    — per-contract event-decoding modules (shared by ingestion + api)
 /dashboard   — example consumer (React/Vite)
 /db          — Postgres schema/init scripts
-/docs        — architecture notes
+/docs        — architecture notes and deployment guide
 ```
 
-## Contributing an adapter for your contract
+## Contributing
 
-See [`docs/writing-an-adapter.md`](docs/writing-an-adapter.md). This is the
-main way other Wave teams should plug into this project.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, and how to submit
+a PR.
+
+The main way to contribute is by writing an adapter for your contract — see
+[docs/writing-an-adapter.md](docs/writing-an-adapter.md).
+
+## Deployment
+
+For self-hosting, see [docs/deployment.md](docs/deployment.md).
+
+## License
+
+See [LICENSE](LICENSE).

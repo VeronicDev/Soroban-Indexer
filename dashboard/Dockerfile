@@ -2,10 +2,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json ./
+# Install dependencies first (layer caching)
+COPY dashboard/package.json ./
 RUN npm install
 
-COPY . .
+COPY dashboard/ .
 
 EXPOSE 5173
 CMD ["npm", "run", "dev"]

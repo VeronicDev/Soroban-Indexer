@@ -5,17 +5,18 @@
  *   topics: ["payment", <sender_address>, <receiver_address>]
  *   value:  { amount: "1000000", asset: "USDC" }
  *
- * TODO (real integration): replace CONTRACT_IDS below with the actual
- * deployed contract ID of the Wave repo you're indexing, and adjust the
- * topic/value shape to match that contract's real event schema (check its
- * `contractevents` in the Soroban RPC output, or its Rust source for the
- * `env.events().publish(...)` calls).
+ * This is a demo adapter using a placeholder contract ID.
+ * To use with a real contract:
+ *   1. Replace PAYMENT_CONTRACT_IDS below with your deployed contract ID(s).
+ *   2. Adjust the topic/value shape to match your contract's real event schema
+ *      (check its Rust source for `env.events().publish(...)` calls).
  */
+const DEMO_CONTRACT_ID = "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
+
 export const paymentAdapter = {
   name: "payment",
 
-  // TODO: replace with the real deployed contract ID you're adapting for.
-  contractIds: ["CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E"],
+  contractIds: [DEMO_CONTRACT_ID],  // Replace with real contract ID(s) for production use
 
   canDecode(rawEvent) {
     const topics = rawEvent.topics ?? [];

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { listEvents, getEventById, parseListParams, eventVolumeByHour } from "../db.js";
+import { logError } from "../logger.js";
 
 export const eventsRouter = Router();
 
@@ -16,7 +17,7 @@ eventsRouter.get("/", async (req, res) => {
       pagination: { limit, offset, count: events.length },
     });
   } catch (err) {
-    console.error("[api] GET /events error:", err);
+    logError("GET /events error", err, { query: req.query });
     res.status(500).json({ error: "internal_error" });
   }
 });
@@ -31,7 +32,7 @@ eventsRouter.get("/volume", async (req, res) => {
     const buckets = await eventVolumeByHour(contract);
     res.json({ data: buckets });
   } catch (err) {
-    console.error("[api] GET /events/volume error:", err);
+    logError("GET /events/volume error", err, { query: req.query });
     res.status(500).json({ error: "internal_error" });
   }
 });
@@ -51,7 +52,7 @@ eventsRouter.get("/:id", async (req, res) => {
 
     res.json({ data: event });
   } catch (err) {
-    console.error("[api] GET /events/:id error:", err);
+    logError("GET /events/:id error", err, { id: req.params.id });
     res.status(500).json({ error: "internal_error" });
   }
 });
