@@ -32,6 +32,15 @@ jobs:
         with:
           node-version: 20
 
+      # The service container is a stock postgres image, so nothing creates the
+      # tables. docker-compose mounts db/init.sql into
+      # docker-entrypoint-initdb.d, but service containers can't, so apply the
+      # schema explicitly before any test touches the database.
+      - name: Initialize database schema
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/init.sql
+        env:
+          DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
+
       # Install each package and run its tests
       - name: API — install & test
         working-directory: api
