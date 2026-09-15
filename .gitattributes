@@ -1,0 +1,9 @@
+# Normalize all text files to LF on checkout and commit, so local
+# (Windows) working trees match what CI sees on Linux.
+* text=auto eol=lf
+
+# Explicit binary guards (none present today, but future-proof)
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
