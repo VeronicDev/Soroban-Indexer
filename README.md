@@ -135,7 +135,7 @@ docker compose logs -f ingestion
 
 ### Prefer to run services directly?
 
-Requires Node.js 20+ and a reachable Postgres.
+Requires Node.js 22+ and a reachable Postgres.
 
 ```bash
 # 1. Create the schema

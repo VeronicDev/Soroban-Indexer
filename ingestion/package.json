@@ -4,6 +4,9 @@
   "description": "Polls Soroban RPC for contract events and writes them to Postgres.",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
