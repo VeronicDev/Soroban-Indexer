@@ -47,15 +47,16 @@ Concretely, that means you can:
 
 ## What you get
 
-| Capability            | Detail                                                                 |
-| --------------------- | ---------------------------------------------------------------------- |
-| Live ingestion        | Polls Soroban RPC for events on the contract IDs you configure         |
-| Crash-safe checkpoint | Per-contract ledger checkpoints so restarts don't duplicate or skip    |
-| Raw + decoded storage | Every event stored verbatim, plus an adapter-decoded structured copy   |
-| REST query API        | Filtering, pagination, single-event lookup, hourly volume for charting |
-| Adapter pattern       | Per-contract decoding modules shared by ingestion and the API          |
-| Example dashboard     | React/Vite consumer proving the pipeline end to end                    |
-| Operational niceties  | CORS, structured JSON logs, graceful shutdown, DB-backed health check  |
+| Capability             | Detail                                                                 |
+| ---------------------- | ---------------------------------------------------------------------- |
+| Live ingestion         | Polls Soroban RPC for events on the contract IDs you configure         |
+| Crash-safe checkpoint  | Per-contract ledger checkpoints so restarts don't duplicate or skip    |
+| Rate-limit aware retry | Exponential backoff per contract, honouring `Retry-After`              |
+| Raw + decoded storage  | Every event stored verbatim, plus an adapter-decoded structured copy   |
+| REST query API         | Filtering, pagination, single-event lookup, hourly volume for charting |
+| Adapter pattern        | Per-contract decoding modules shared by ingestion and the API          |
+| Example dashboard      | React/Vite consumer proving the pipeline end to end                    |
+| Operational niceties   | CORS, structured JSON logs, graceful shutdown, DB-backed health check  |
 
 ## Architecture
 
@@ -72,8 +73,10 @@ Concretely, that means you can:
 
 - **ingestion** — polls Soroban RPC for events on configured contract IDs, writes
   raw events to Postgres, and tracks per-contract checkpoints so restarts don't
-  duplicate or skip events. See [docs/ingestion.md](docs/ingestion.md) for the
-  polling and checkpointing strategy in detail.
+  duplicate or skip events. Retryable failures (rate limits, timeouts, 5xx) back
+  off exponentially per contract instead of hammering the endpoint. See
+  [docs/ingestion.md](docs/ingestion.md) for the polling, checkpointing, and
+  backoff strategy in detail.
 - **adapters** — decode raw events into structured, contract-specific schemas.
   Any team can add an adapter for their own contract without touching core code.
   Events with no matching adapter fall back to the `generic` adapter, so nothing
@@ -156,12 +159,14 @@ Both services read environment variables from their own `.env` file (copied from
 
 ### ingestion/.env
 
-| Variable           | Required | Default | Description                                                       |
-| ------------------ | -------- | ------- | ----------------------------------------------------------------- |
-| `SOROBAN_RPC_URL`  | Yes      | —       | Soroban RPC endpoint (e.g. `https://soroban-testnet.stellar.org`) |
-| `CONTRACT_IDS`     | Yes      | —       | Comma-separated list of contract IDs to index                     |
-| `POLL_INTERVAL_MS` | No       | `5000`  | How often to poll RPC for new events, in milliseconds             |
-| `DATABASE_URL`     | No       | —       | Postgres connection string (set by docker-compose in local dev)   |
+| Variable           | Required | Default  | Description                                                       |
+| ------------------ | -------- | -------- | ----------------------------------------------------------------- |
+| `SOROBAN_RPC_URL`  | Yes      | —        | Soroban RPC endpoint (e.g. `https://soroban-testnet.stellar.org`) |
+| `CONTRACT_IDS`     | Yes      | —        | Comma-separated list of contract IDs to index                     |
+| `POLL_INTERVAL_MS` | No       | `5000`   | How often to poll RPC for new events, in milliseconds             |
+| `RETRY_BASE_MS`    | No       | `1000`   | First retry delay after a retryable failure, in milliseconds      |
+| `RETRY_MAX_MS`     | No       | `300000` | Ceiling for retry backoff, in milliseconds (5 minutes)            |
+| `DATABASE_URL`     | No       | —        | Postgres connection string (set by docker-compose in local dev)   |
 
 The service exits immediately at startup if `SOROBAN_RPC_URL` or `CONTRACT_IDS`
 is missing.
@@ -285,9 +290,9 @@ Known v1 limitations worth knowing before you deploy:
 - **Single ingestion instance per contract set.** There is no distributed
   locking; running two ingestion replicas against the same contracts is
   harmless (the unique constraint dedupes) but wasteful.
-- **No RPC backoff.** Rate limits and transient RPC errors are logged and
-  retried on the next tick rather than backed off, so tune `POLL_INTERVAL_MS` or
-  split contracts across instances if you hit them often.
+- **Backoff is per-process.** Retry state lives in memory, so it isn't shared
+  between replicas and resets on restart. It also isn't a substitute for
+  splitting a very large contract list across instances.
 
 ## Deployment and scaling
 
