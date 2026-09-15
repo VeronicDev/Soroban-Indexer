@@ -2,11 +2,13 @@
 
 Base URL (local dev): `http://localhost:4000`
 
-## `GET /health`
+## `GET /v1/health`
 
-Health check. Returns `{ "status": "ok" }`.
+Health check. Returns `{ "status": "ok", "db": "connected" }` when Postgres is reachable; `503` with `"db": "disconnected"` otherwise.
 
-## `GET /events`
+`GET /health` is also available as a redirect alias for convenience.
+
+## `GET /v1/events`
 
 List events, most recent first, with optional filters.
 
@@ -24,7 +26,7 @@ List events, most recent first, with optional filters.
 **Example:**
 
 ```bash
-curl "http://localhost:4000/events?contract=CBQH...&type=payment&limit=10"
+curl "http://localhost:4000/v1/events?contract=CBQH...&type=payment&limit=10"
 ```
 
 ```json
@@ -55,14 +57,14 @@ curl "http://localhost:4000/events?contract=CBQH...&type=payment&limit=10"
 
 An empty result set returns `"data": []` with HTTP 200, not an error.
 
-## `GET /events/:id`
+## `GET /v1/events/:id`
 
 Fetch a single event by its indexer-assigned ID, including the full raw
 payload from RPC.
 
 Returns `404` if the ID doesn't exist.
 
-## `GET /events/volume?contract=`
+## `GET /v1/events/volume?contract=`
 
 Event counts bucketed by hour, for charting. `contract` is required —
 returns `400` if omitted.

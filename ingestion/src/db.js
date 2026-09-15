@@ -6,6 +6,20 @@ export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+/**
+ * Make a value safe for JSONB storage. scValToNative() can return BigInt for
+ * i128/u128 values (e.g. token amounts), which JSON.stringify cannot serialize
+ * — so convert BigInt to string before writing to Postgres.
+ */
+export function jsonSafe(value) {
+  if (typeof value === "bigint") return value.toString();
+  if (Array.isArray(value)) return value.map(jsonSafe);
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, jsonSafe(v)]));
+  }
+  return value;
+}
+
 export async function getCheckpoint(contractId) {
   const { rows } = await pool.query(
     `SELECT last_ledger_seen FROM ingestion_checkpoints WHERE contract_id = $1`,
@@ -48,9 +62,9 @@ export async function insertRawEvent(event) {
       ledgerSequence,
       txHash,
       ledgerCloseTime,
-      JSON.stringify(topics ?? null),
-      JSON.stringify(value ?? null),
-      JSON.stringify(rawPayload),
+      JSON.stringify(jsonSafe(topics ?? null)),
+      JSON.stringify(jsonSafe(value ?? null)),
+      JSON.stringify(jsonSafe(rawPayload)),
     ],
   );
 

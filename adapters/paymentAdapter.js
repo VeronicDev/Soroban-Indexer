@@ -11,7 +11,7 @@
  *   2. Adjust the topic/value shape to match your contract's real event schema
  *      (check its Rust source for `env.events().publish(...)` calls).
  */
-const DEMO_CONTRACT_ID = "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
+const DEMO_CONTRACT_ID = "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
 
 export const paymentAdapter = {
   name: "payment",

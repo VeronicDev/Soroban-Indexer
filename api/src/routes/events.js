@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { listEvents, getEventById, parseListParams, eventVolumeByHour } from "../db.js";
+import {
+  listEvents,
+  getEventById,
+  parseListParams,
+  eventVolumeByHour,
+  validateDateParams,
+} from "../db.js";
 import { logError } from "../logger.js";
 
 export const eventsRouter = Router();
@@ -9,6 +15,11 @@ eventsRouter.get("/", async (req, res) => {
   try {
     const { contract, type, from, to } = req.query;
     const { limit, offset } = parseListParams(req.query);
+
+    const dateError = validateDateParams(from, to);
+    if (dateError) {
+      return res.status(400).json({ error: dateError });
+    }
 
     const events = await listEvents({ contract, type, from, to, limit, offset });
 

@@ -10,9 +10,26 @@ const MAX_LIMIT = 200;
 const DEFAULT_LIMIT = 50;
 
 export function parseListParams(query) {
-  const limit = Math.min(Number(query.limit) || DEFAULT_LIMIT, MAX_LIMIT);
+  const limit = Math.min(Math.max(Number(query.limit) || DEFAULT_LIMIT, 1), MAX_LIMIT);
   const offset = Math.max(Number(query.offset) || 0, 0);
   return { limit, offset };
+}
+
+/**
+ * Validate ISO date range params; returns an error message or null if valid.
+ * Invalid dates fall back to `Invalid Date` in `new Date(...)` and would
+ * otherwise silently match nothing — surface a 400 instead.
+ */
+export function validateDateParams(from, to) {
+  for (const [label, value] of [
+    ["from", from],
+    ["to", to],
+  ]) {
+    if (value && Number.isNaN(new Date(value).getTime())) {
+      return `${label} must be a valid ISO date`;
+    }
+  }
+  return null;
 }
 
 /**

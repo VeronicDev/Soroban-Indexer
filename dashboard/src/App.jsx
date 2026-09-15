@@ -15,7 +15,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 // (must match one of CONTRACT_IDS in ingestion/.env).
 const DEMO_CONTRACT_ID =
   import.meta.env.VITE_DEMO_CONTRACT_ID ||
-  "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
+  "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC";
 
 export default function App() {
   const [events, setEvents] = useState([]);
@@ -29,8 +29,8 @@ export default function App() {
     async function load() {
       try {
         const [eventsRes, volumeRes] = await Promise.all([
-          fetch(`${API_URL}/events?contract=${DEMO_CONTRACT_ID}&limit=25`),
-          fetch(`${API_URL}/events/volume?contract=${DEMO_CONTRACT_ID}`),
+          fetch(`${API_URL}/v1/events?contract=${DEMO_CONTRACT_ID}&limit=25`),
+          fetch(`${API_URL}/v1/events/volume?contract=${DEMO_CONTRACT_ID}`),
         ]);
 
         if (!eventsRes.ok || !volumeRes.ok) {

@@ -54,6 +54,14 @@ test("GET /v1/events/:id rejects a non-integer id", async () => {
   assert.equal(res.status, 400);
 });
 
+test("GET /v1/events rejects an invalid date range with 400", async () => {
+  const app = buildApp();
+  const res = await request(app).get("/v1/events?from=not-a-date");
+
+  assert.equal(res.status, 400);
+  assert.match(res.body.error, /from/);
+});
+
 test("GET /v1/events/volume requires a contract query param", async () => {
   const app = buildApp();
   const res = await request(app).get("/v1/events/volume");

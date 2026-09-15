@@ -25,7 +25,7 @@ Tests use Node's built-in test runner — no extra framework needed.
 cd api && npm test
 
 # Adapter unit tests
-cd adapters && node --test __tests__/*.test.js
+node --test adapters/__tests__/*.test.js
 
 # Ingestion DB tests (requires a running Postgres instance)
 cd ingestion && TEST_DATABASE_URL=postgres://indexer:indexer@localhost:5432/soroban_indexer npm test

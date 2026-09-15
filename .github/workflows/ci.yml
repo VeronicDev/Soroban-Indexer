@@ -64,6 +64,19 @@ jobs:
           TEST_DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
           DATABASE_URL: postgres://indexer:indexer@localhost:5432/soroban_indexer
 
+  dashboard-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dashboard — install & build
+        working-directory: dashboard
+        run: |
+          npm ci
+          npm run build
+
   # Formatting check (non-blocking for now)
   format:
     runs-on: ubuntu-latest

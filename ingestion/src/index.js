@@ -12,6 +12,11 @@ const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS ?? 5000);
 const RETRY_BASE_MS = Number(process.env.RETRY_BASE_MS ?? 1000);
 const RETRY_MAX_MS = Number(process.env.RETRY_MAX_MS ?? 300_000);
 
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL is required");
+  process.exit(1);
+}
+
 if (!RPC_URL) {
   console.error("SOROBAN_RPC_URL is required");
   process.exit(1);
