@@ -9,7 +9,7 @@ export const pool = new Pool({
 export async function getCheckpoint(contractId) {
   const { rows } = await pool.query(
     `SELECT last_ledger_seen FROM ingestion_checkpoints WHERE contract_id = $1`,
-    [contractId]
+    [contractId],
   );
   return rows.length > 0 ? Number(rows[0].last_ledger_seen) : 0;
 }
@@ -20,7 +20,7 @@ export async function setCheckpoint(contractId, lastLedgerSeen) {
      VALUES ($1, $2, now())
      ON CONFLICT (contract_id)
      DO UPDATE SET last_ledger_seen = EXCLUDED.last_ledger_seen, updated_at = now()`,
-    [contractId, lastLedgerSeen]
+    [contractId, lastLedgerSeen],
   );
 }
 
@@ -51,18 +51,24 @@ export async function insertRawEvent(event) {
       JSON.stringify(topics ?? null),
       JSON.stringify(value ?? null),
       JSON.stringify(rawPayload),
-    ]
+    ],
   );
 
   // rows is empty when ON CONFLICT DO NOTHING skipped an existing row.
   return rows[0]?.id ?? null;
 }
 
-export async function insertDecodedEvent({ rawEventId, contractId, adapterName, eventType, decoded }) {
+export async function insertDecodedEvent({
+  rawEventId,
+  contractId,
+  adapterName,
+  eventType,
+  decoded,
+}) {
   await pool.query(
     `INSERT INTO decoded_events (raw_event_id, contract_id, adapter_name, event_type, decoded)
      VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (raw_event_id, adapter_name) DO NOTHING`,
-    [rawEventId, contractId, adapterName, eventType ?? null, JSON.stringify(decoded)]
+    [rawEventId, contractId, adapterName, eventType ?? null, JSON.stringify(decoded)],
   );
 }

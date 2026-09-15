@@ -18,7 +18,7 @@ export async function pollContract(server, contractId) {
 
   const startLedger = Math.max(
     lastSeen + 1,
-    latestLedger - MAX_LEDGERS_PER_POLL // avoid requesting a window the RPC provider will reject
+    latestLedger - MAX_LEDGERS_PER_POLL, // avoid requesting a window the RPC provider will reject
   );
 
   if (startLedger > latestLedger) {

@@ -16,9 +16,7 @@ function buildApp() {
 
 test("GET /v1/events returns paginated data shape", async (t) => {
   t.mock.method(pool, "query", async () => ({
-    rows: [
-      { id: 1, contract_id: "CTEST", event_type: "payment", ledger_sequence: 100 },
-    ],
+    rows: [{ id: 1, contract_id: "CTEST", event_type: "payment", ledger_sequence: 100 }],
   }));
 
   const app = buildApp();
@@ -89,8 +87,5 @@ test("GET /v1/events includes Access-Control-Allow-Origin header", async (t) => 
   const app = buildApp();
   const res = await request(app).get("/v1/events");
 
-  assert.ok(
-    res.headers["access-control-allow-origin"],
-    "should include CORS header"
-  );
+  assert.ok(res.headers["access-control-allow-origin"], "should include CORS header");
 });

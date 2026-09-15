@@ -9,6 +9,7 @@ offer one — polling is the simplest reliable approach and is easy to reason
 about for a v1.
 
 For each contract, on every tick:
+
 1. Fetch the latest ledger sequence from RPC.
 2. Compute a `startLedger` = `max(last_checkpoint + 1, latest_ledger - MAX_LEDGERS_PER_POLL)`.
    The cap exists because most RPC providers reject requests for very large

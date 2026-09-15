@@ -18,8 +18,8 @@ Add a new file in `/adapters`, e.g. `adapters/myContractAdapter.js`:
 
 ```js
 export const myContractAdapter = {
-  name: "my_contract",                 // unique — becomes decoded_events.adapter_name
-  contractIds: ["C..."],               // your deployed contract ID(s)
+  name: "my_contract", // unique — becomes decoded_events.adapter_name
+  contractIds: ["C..."], // your deployed contract ID(s)
 
   // Optional: extra check beyond contract ID match, e.g. by topic
   canDecode(rawEvent) {

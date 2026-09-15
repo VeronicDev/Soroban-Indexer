@@ -13,6 +13,6 @@ export function logError(message, err, meta = {}) {
       error: err?.message ?? String(err),
       stack: err?.stack,
       ...meta,
-    })
+    }),
   );
 }

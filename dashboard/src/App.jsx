@@ -13,7 +13,8 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 // Demo contract ID — replace with your real deployed contract ID
 // (must match one of CONTRACT_IDS in ingestion/.env).
-const DEMO_CONTRACT_ID = import.meta.env.VITE_DEMO_CONTRACT_ID ||
+const DEMO_CONTRACT_ID =
+  import.meta.env.VITE_DEMO_CONTRACT_ID ||
   "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO4E";
 
 export default function App() {
@@ -45,7 +46,7 @@ export default function App() {
             volumeJson.data.map((row) => ({
               time: new Date(row.bucket).toLocaleString(),
               count: Number(row.count),
-            }))
+            })),
           );
           setLoading(false);
         }
@@ -66,12 +67,18 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem", maxWidth: 900, margin: "0 auto" }}>
+    <div
+      style={{
+        fontFamily: "system-ui, sans-serif",
+        padding: "2rem",
+        maxWidth: 900,
+        margin: "0 auto",
+      }}
+    >
       <h1>Soroban Indexer — Example Dashboard</h1>
       <p style={{ color: "#666" }}>
-        Live feed and event volume for contract <code>{DEMO_CONTRACT_ID}</code>.
-        This is a reference consumer proving the ingestion → API pipeline
-        works end to end — not a polished product.
+        Live feed and event volume for contract <code>{DEMO_CONTRACT_ID}</code>. This is a reference
+        consumer proving the ingestion → API pipeline works end to end — not a polished product.
       </p>
 
       {loading && <p>Loading…</p>}
@@ -110,8 +117,8 @@ export default function App() {
               {events.length === 0 && (
                 <tr>
                   <td colSpan={4} style={{ padding: "1rem 0", color: "#666" }}>
-                    No events indexed yet — make sure the ingestion service is
-                    running and pointed at this contract ID.
+                    No events indexed yet — make sure the ingestion service is running and pointed
+                    at this contract ID.
                   </td>
                 </tr>
               )}

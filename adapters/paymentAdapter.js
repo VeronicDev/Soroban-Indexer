@@ -16,7 +16,7 @@ const DEMO_CONTRACT_ID = "CBQHNAXSI55GX2GN6D67GK7BHVPSLJUGZQEU7WJ5LKR5PNUCGLIMAO
 export const paymentAdapter = {
   name: "payment",
 
-  contractIds: [DEMO_CONTRACT_ID],  // Replace with real contract ID(s) for production use
+  contractIds: [DEMO_CONTRACT_ID], // Replace with real contract ID(s) for production use
 
   canDecode(rawEvent) {
     const topics = rawEvent.topics ?? [];

@@ -19,19 +19,19 @@ cp api/.env.example api/.env
 
 ### Ingestion (.env)
 
-| Variable | Required | Description |
-|---|---|---|
-| `SOROBAN_RPC_URL` | Yes | Soroban RPC endpoint (e.g. `https://soroban-testnet.stellar.org`) |
-| `CONTRACT_IDS` | Yes | Comma-separated list of contract IDs to index |
-| `POLL_INTERVAL_MS` | No | Polling interval in ms (default: 5000) |
-| `DATABASE_URL` | No | Postgres connection string (overridden by docker-compose in local dev) |
+| Variable           | Required | Description                                                            |
+| ------------------ | -------- | ---------------------------------------------------------------------- |
+| `SOROBAN_RPC_URL`  | Yes      | Soroban RPC endpoint (e.g. `https://soroban-testnet.stellar.org`)      |
+| `CONTRACT_IDS`     | Yes      | Comma-separated list of contract IDs to index                          |
+| `POLL_INTERVAL_MS` | No       | Polling interval in ms (default: 5000)                                 |
+| `DATABASE_URL`     | No       | Postgres connection string (overridden by docker-compose in local dev) |
 
 ### API (.env)
 
-| Variable | Required | Description |
-|---|---|---|
-| `PORT` | No | API listen port (default: 4000) |
-| `DATABASE_URL` | Yes | Postgres connection string (same as ingestion) |
+| Variable       | Required | Description                                    |
+| -------------- | -------- | ---------------------------------------------- |
+| `PORT`         | No       | API listen port (default: 4000)                |
+| `DATABASE_URL` | Yes      | Postgres connection string (same as ingestion) |
 
 ## Running with Docker Compose
 
@@ -43,12 +43,12 @@ docker compose up --build
 
 This starts:
 
-| Service | Port | Description |
-|---|---|---|
-| `postgres` | 5432 | Database (with schema auto-initialized) |
-| `ingestion` | — | Polls RPC and writes events |
-| `api` | 4000 | REST query layer |
-| `dashboard` | 5173 | Example dashboard |
+| Service     | Port | Description                             |
+| ----------- | ---- | --------------------------------------- |
+| `postgres`  | 5432 | Database (with schema auto-initialized) |
+| `ingestion` | —    | Polls RPC and writes events             |
+| `api`       | 4000 | REST query layer                        |
+| `dashboard` | 5173 | Example dashboard                       |
 
 ### Running in the background
 
@@ -70,11 +70,11 @@ Each service reads `DATABASE_URL` (or `SOROBAN_RPC_URL` / `CONTRACT_IDS`) from t
 
 ## Testnet vs Mainnet
 
-| | Testnet | Mainnet |
-|---|---|---|
-| RPC URL | `https://soroban-testnet.stellar.org` | `https://soroban-mainnet.stellar.org` |
-| Data volume | Low — good for testing | High — monitor disk usage on Postgres |
-| Ingestion lag | Minimal | May fall behind if `MAX_LEDGERS_PER_POLL` is exceeded |
+|               | Testnet                               | Mainnet                                               |
+| ------------- | ------------------------------------- | ----------------------------------------------------- |
+| RPC URL       | `https://soroban-testnet.stellar.org` | `https://soroban-mainnet.stellar.org`                 |
+| Data volume   | Low — good for testing                | High — monitor disk usage on Postgres                 |
+| Ingestion lag | Minimal                               | May fall behind if `MAX_LEDGERS_PER_POLL` is exceeded |
 
 Update `SOROBAN_RPC_URL` in `ingestion/.env` to switch networks.
 

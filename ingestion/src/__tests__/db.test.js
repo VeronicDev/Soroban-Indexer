@@ -7,8 +7,7 @@ const { Pool } = pg;
 // Use a dedicated test database — fall back to the default local dev one.
 // Tests truncate tables between runs so they're idempotent.
 const TEST_DB_URL =
-  process.env.TEST_DATABASE_URL ||
-  "postgres://indexer:indexer@localhost:5432/soroban_indexer";
+  process.env.TEST_DATABASE_URL || "postgres://indexer:indexer@localhost:5432/soroban_indexer";
 
 let pool;
 
@@ -31,12 +30,8 @@ beforeEach(async () => {
 //     so we re-point it for the test process. ---
 process.env.DATABASE_URL = TEST_DB_URL;
 
-const {
-  getCheckpoint,
-  setCheckpoint,
-  insertRawEvent,
-  insertDecodedEvent,
-} = await import("../db.js");
+const { getCheckpoint, setCheckpoint, insertRawEvent, insertDecodedEvent } =
+  await import("../db.js");
 
 // ── Checkpoints ────────────────────────────────────────────────
 
@@ -120,10 +115,9 @@ test("insertDecodedEvent inserts a row linked to raw_event", async () => {
     decoded: { kind: "mint" },
   });
 
-  const { rows } = await pool.query(
-    "SELECT * FROM decoded_events WHERE raw_event_id = $1",
-    [rawId]
-  );
+  const { rows } = await pool.query("SELECT * FROM decoded_events WHERE raw_event_id = $1", [
+    rawId,
+  ]);
   assert.equal(rows.length, 1);
   assert.equal(rows[0].adapter_name, "generic");
 });
@@ -159,7 +153,7 @@ test("insertDecodedEvent deduplicates on (raw_event_id, adapter_name)", async ()
 
   const { rows } = await pool.query(
     "SELECT count(*)::int AS cnt FROM decoded_events WHERE raw_event_id = $1",
-    [rawId]
+    [rawId],
   );
   assert.equal(rows[0].cnt, 1);
 });

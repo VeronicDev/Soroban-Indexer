@@ -57,7 +57,7 @@ export async function listEvents({ contract, type, from, to, limit, offset }) {
      ${whereClause}
      ORDER BY r.ledger_sequence DESC, r.id DESC
      LIMIT $${limitParamIndex} OFFSET $${offsetParamIndex}`,
-    params
+    params,
   );
 
   return rows;
@@ -72,7 +72,7 @@ export async function getEventById(id) {
      FROM raw_events r
      LEFT JOIN decoded_events d ON d.raw_event_id = r.id
      WHERE r.id = $1`,
-    [id]
+    [id],
   );
   return rows[0] ?? null;
 }
@@ -88,7 +88,7 @@ export async function eventVolumeByHour(contractId) {
      WHERE contract_id = $1 AND ledger_close_time IS NOT NULL
      GROUP BY bucket
      ORDER BY bucket ASC`,
-    [contractId]
+    [contractId],
   );
   return rows;
 }

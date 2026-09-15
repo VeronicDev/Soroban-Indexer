@@ -12,6 +12,6 @@ export function logError(message, err, meta = {}) {
       message,
       error: err?.message ?? String(err),
       ...meta,
-    })
+    }),
   );
 }

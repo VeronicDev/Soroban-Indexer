@@ -12,14 +12,14 @@ List events, most recent first, with optional filters.
 
 **Query params** (all optional):
 
-| param | type | description |
-|---|---|---|
-| `contract` | string | Filter by contract ID |
-| `type` | string | Filter by event type (the first topic) |
-| `from` | ISO date | Only events with `ledger_close_time >= from` |
-| `to` | ISO date | Only events with `ledger_close_time <= to` |
-| `limit` | int | Max results, default 50, capped at 200 |
-| `offset` | int | Pagination offset, default 0 |
+| param      | type     | description                                  |
+| ---------- | -------- | -------------------------------------------- |
+| `contract` | string   | Filter by contract ID                        |
+| `type`     | string   | Filter by event type (the first topic)       |
+| `from`     | ISO date | Only events with `ledger_close_time >= from` |
+| `to`       | ISO date | Only events with `ledger_close_time <= to`   |
+| `limit`    | int      | Max results, default 50, capped at 200       |
+| `offset`   | int      | Pagination offset, default 0                 |
 
 **Example:**
 
@@ -40,7 +40,13 @@ curl "http://localhost:4000/events?contract=CBQH...&type=payment&limit=10"
       "topics": ["payment", "GSENDER...", "GRECEIVER..."],
       "value": { "amount": "1000000", "asset": "USDC" },
       "adapter_name": "payment",
-      "decoded": { "kind": "payment", "sender": "GSENDER...", "receiver": "GRECEIVER...", "amount": "1000000", "asset": "USDC" }
+      "decoded": {
+        "kind": "payment",
+        "sender": "GSENDER...",
+        "receiver": "GRECEIVER...",
+        "amount": "1000000",
+        "asset": "USDC"
+      }
     }
   ],
   "pagination": { "limit": 10, "offset": 0, "count": 1 }

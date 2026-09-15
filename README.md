@@ -49,12 +49,12 @@ docker compose up --build
 All endpoints are under the `/v1/` prefix. See [docs/api.md](docs/api.md) for
 full details.
 
-| Endpoint | Description |
-|---|---|
-| `GET /v1/health` | Health check (includes DB connectivity) |
-| `GET /v1/events` | List events with optional filters and pagination |
-| `GET /v1/events/:id` | Get a single event by ID |
-| `GET /v1/events/volume?contract=` | Event counts per hour for charting |
+| Endpoint                          | Description                                      |
+| --------------------------------- | ------------------------------------------------ |
+| `GET /v1/health`                  | Health check (includes DB connectivity)          |
+| `GET /v1/events`                  | List events with optional filters and pagination |
+| `GET /v1/events/:id`              | Get a single event by ID                         |
+| `GET /v1/events/volume?contract=` | Event counts per hour for charting               |
 
 ## Scope
 

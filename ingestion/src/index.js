@@ -32,7 +32,10 @@ async function pollLoop() {
       try {
         const written = await pollContract(server, contractId);
         if (written > 0) {
-          log(`${contractId}: wrote ${written} new event(s)`, { contract_id: contractId, count: written });
+          log(`${contractId}: wrote ${written} new event(s)`, {
+            contract_id: contractId,
+            count: written,
+          });
         }
       } catch (err) {
         // Reconnection/retry: don't crash the whole loop on a transient RPC

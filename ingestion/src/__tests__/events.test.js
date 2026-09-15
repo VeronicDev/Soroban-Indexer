@@ -2,21 +2,16 @@ import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 
 process.env.DATABASE_URL =
-  process.env.TEST_DATABASE_URL ||
-  "postgres://indexer:indexer@localhost:5432/soroban_indexer";
+  process.env.TEST_DATABASE_URL || "postgres://indexer:indexer@localhost:5432/soroban_indexer";
 
-const { getCheckpoint, setCheckpoint, insertRawEvent } = await import(
-  "../db.js"
-);
+const { getCheckpoint, setCheckpoint, insertRawEvent } = await import("../db.js");
 const { pollContract, createServer } = await import("../rpcListener.js");
 
 import pg from "pg";
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
 beforeEach(async () => {
-  await pool.query(
-    "TRUNCATE raw_events, decoded_events, ingestion_checkpoints RESTART IDENTITY"
-  );
+  await pool.query("TRUNCATE raw_events, decoded_events, ingestion_checkpoints RESTART IDENTITY");
 });
 
 // ── pollContract ───────────────────────────────────────────────
