@@ -24,7 +24,13 @@ cp api/.env.example api/.env
 | `SOROBAN_RPC_URL`  | Yes      | Soroban RPC endpoint (e.g. `https://soroban-testnet.stellar.org`)      |
 | `CONTRACT_IDS`     | Yes      | Comma-separated list of contract IDs to index                          |
 | `POLL_INTERVAL_MS` | No       | Polling interval in ms (default: 5000)                                 |
+| `RETRY_BASE_MS`    | No       | First retry delay after a retryable failure in ms (default: 1000)      |
+| `RETRY_MAX_MS`     | No       | Ceiling for retry backoff in ms (default: 300000 = 5 minutes)          |
 | `DATABASE_URL`     | No       | Postgres connection string (overridden by docker-compose in local dev) |
+
+Retryable RPC failures (rate limits, timeouts, 5xx, socket errors) back off
+exponentially per contract instead of hammering the endpoint at a fixed
+interval. See [ingestion.md](ingestion.md) for the classification table.
 
 ### API (.env)
 
@@ -105,7 +111,8 @@ Errors are logged per-contract and don't crash the process:
 
 - **Checkpoint staleness**: If `ingestion_checkpoints.updated_at` stops advancing, the ingestion service is stuck or the RPC endpoint is down.
 - **Disk usage**: Postgres grows proportional to event volume. For high-traffic mainnet contracts, set up log rotation or archival for `raw_events`.
-- **RPC rate limits**: If you see repeated rate-limit errors, increase `POLL_INTERVAL_MS` or reduce the number of contracts per instance.
+- **RPC rate limits**: Retryable failures back off automatically per contract, so repeated `"reason":"rate_limited"` lines with a growing `attempt` count mean the endpoint is still throttling. Raise `RETRY_MAX_MS` to be more patient, or reduce the number of contracts per instance.
+- **Non-retryable failures**: `"retryable":false` with `"retry_in_ms":0` means the request was rejected outright (bad contract ID, invalid params) and is being retried unthrottled every tick — it will never succeed on its own, so treat it as a configuration error.
 
 ## Scaling considerations
 
