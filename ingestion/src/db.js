@@ -55,7 +55,9 @@ export async function insertRawEvent(event) {
   );
 
   // rows is empty when ON CONFLICT DO NOTHING skipped an existing row.
-  return rows[0]?.id ?? null;
+  // node-postgres parses int8 (BIGSERIAL) as a string, so normalize to a
+  // number — matching getCheckpoint above — to keep the id type consistent.
+  return rows[0] ? Number(rows[0].id) : null;
 }
 
 export async function insertDecodedEvent({
