@@ -32,7 +32,7 @@ it — without writing your own indexer from scratch.
 
 No shared event-indexing/query layer exists for Soroban today — every project
 (e.g. Tikka) rolls its own one-off indexer, and Soroswap's own roadmap has listed
-"implement indexer" as unfinished work for years. With 700+ approved Wave repos
+"implement indexer" as unfinished work for years. With lots of repos
 now shipping contracts, most teams are hitting RPC directly instead of a shared
 query layer. This project is that shared layer: any team can pull it into their
 own stack unilaterally, without needing to coordinate with anyone else.
