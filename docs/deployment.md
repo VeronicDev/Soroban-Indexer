@@ -4,7 +4,7 @@ This document covers how to run the Soroban Indexer in a self-hosted environment
 
 ## Prerequisites
 
-- Docker and Docker Compose (for the recommended setup), or Node.js 20+ and a Postgres 14+ instance
+- Docker and Docker Compose (for the recommended setup), or Node.js 22+ and a Postgres 14+ instance
 - A Soroban RPC endpoint (testnet or mainnet)
 - The contract IDs you want to index
 
