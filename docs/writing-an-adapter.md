@@ -60,9 +60,14 @@ Add your contract ID to `CONTRACT_IDS` in `ingestion/.env` (comma-separated).
 
 ## 5. Test it
 
-Add a test in `ingestion/src/__tests__/` following the pattern in
+Add a test in `adapters/__tests__/` following the pattern in
 `adapters.test.js` — construct a fake raw event matching your real event
 shape and assert `decode()` produces the fields you expect.
+
+```bash
+# Run adapter tests
+node --test adapters/__tests__/*.test.js
+```
 
 ## What happens if you don't write an adapter
 
