@@ -77,6 +77,17 @@ jobs:
           npm ci
           npm run build
 
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -f api/Dockerfile .
+      - name: Build ingestion image
+        run: docker build -f ingestion/Dockerfile .
+      - name: Build dashboard image
+        run: docker build ./dashboard
+
   # Formatting check (non-blocking for now)
   format:
     runs-on: ubuntu-latest
