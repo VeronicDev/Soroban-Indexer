@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { createServer, pollContract } from "./rpcListener.js";
 import { createRetryTracker } from "./backoff.js";
+import { pool } from "./db.js";
 import { log, logError } from "./logger.js";
 
 const RPC_URL = process.env.SOROBAN_RPC_URL;
@@ -30,8 +31,12 @@ const server = createServer(RPC_URL);
 const retryTracker = createRetryTracker({ baseMs: RETRY_BASE_MS, maxMs: RETRY_MAX_MS });
 
 let shuttingDown = false;
-process.on("SIGTERM", () => (shuttingDown = true));
-process.on("SIGINT", () => (shuttingDown = true));
+function requestShutdown() {
+  log("shutdown signal received");
+  shuttingDown = true;
+}
+process.on("SIGTERM", requestShutdown);
+process.on("SIGINT", requestShutdown);
 
 async function pollLoop() {
   log(`starting, watching ${CONTRACT_IDS.length} contract(s)`);
@@ -73,7 +78,13 @@ async function pollLoop() {
     await sleep(POLL_INTERVAL_MS);
   }
 
-  log("shutting down cleanly");
+  log("draining database connections");
+  try {
+    await pool.end();
+  } catch (err) {
+    logError("error closing database pool", err);
+  }
+  log("shut down cleanly");
   process.exit(0);
 }
 
